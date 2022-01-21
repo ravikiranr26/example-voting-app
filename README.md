@@ -1,6 +1,6 @@
 Example Voting App
 =========
-This is the sample voting app test1.
+This is the sample voting app test2.
 
 Getting started
 ---------------
