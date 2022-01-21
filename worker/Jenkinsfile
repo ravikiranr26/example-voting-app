@@ -7,6 +7,9 @@ pipeline {
 
     stages {
         stage('build') {
+            when {
+                changeset "**/worker/**"
+            }
             steps {
                 echo 'Compiling the worker app'
                 dir('worker') {
@@ -15,20 +18,43 @@ pipeline {
             }
         }
         stage('test') {
+            when {
+                changeset "**/worker/**"
+            }
             steps {
                 echo 'Running the Unit tests on Worker app'
+                dir('worker') {
+                     sh 'mvn clean test'
+                }
             }
         }
         stage('package') {
+            when {
+                branch 'master'
+                changeset "**/worker/**"
+            }
             steps {
                 echo 'Packaging the worker app'
+                dir('worker') {
+                     sh 'mvn package -DskipTests'
+                      archiveArtifacts artifacts: '**/target/*.jar',
+                        allowEmptyArchive: true,
+                        fingerprint: true,
+                        onlyIfSuccessful: true
+                }
             }
         }
     }
     
     post  {
         always {
-            echo 'Build pipeline for worker run is completed'
+            echo 'pipeline for worker run is completed'
+        }
+        failure {
+            slackSend (channel: "instavote-cd", message: "Build Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")    
+         }
+        success {
+            slackSend (channel: "instavote-cd", message: "Build Success: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
         }
     }
 }
