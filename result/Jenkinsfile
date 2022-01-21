@@ -22,7 +22,7 @@ pipeline {
                 changeset "**/result/**"
             }
             steps {
-                echo 'Running the Unit tests on Result app'
+                echo 'Running the Unit tests on Result App'
                 dir('result') {
                      sh 'npm install && npm test'
                 }
