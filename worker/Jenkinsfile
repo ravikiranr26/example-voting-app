@@ -51,7 +51,7 @@ pipeline {
                 changeset "**/worker/**"
             }
             steps {
-            echo 'Packaging the worker app with docker'
+            echo 'Packaging the worker app with docker.'
             script {
                 docker.withRegistry('https://index.docker.io/v1', 'dockerlogin') {
                     def workerImage = docker.build("rknmit/devops:v${env.BUILD_ID}", "./worker")
