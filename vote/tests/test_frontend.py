@@ -17,12 +17,12 @@ class VoteUnitTest(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
 
     def test_version_is_set(self):
-        """Assert that version is set"""
+        """Assert that the version is set"""
         result = self.app.get('/')
         assert 'Version' in str(result.data)
 
     def test_processed_by_is_set(self):
-        """Assert that processed by string is set"""
+        """Assert that the processed by string is set"""
         result = self.app.get('/')
         assert 'Processed by' in str(result.data)
 
