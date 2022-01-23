@@ -13,7 +13,9 @@ pipeline {
             steps {
                 echo 'Compiling Vote App'
                 dir('vote') {
-                    sh 'pip install --target ${env.WORKSPACE} -i requirements.txt'
+                     withEnv(["HOME=${env.WORKSPACE}"]) {
+                         sh 'pip install -i requirements.txt'
+                     }
                 }
             }
         }
