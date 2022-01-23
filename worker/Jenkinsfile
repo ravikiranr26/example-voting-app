@@ -1,12 +1,14 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.6.1-jdk-8-alpine'
-            args '-v $HOME/.m2:/root/.m2'
-        }
-    }
+
+    agent none
 
     stages {
+        agent {
+            docker {
+                image 'maven:3.6.1-jdk-8-alpine'
+                args '-v $HOME/.m2:/root/.m2'
+            }
+        }
         stage('build') {
             when {
                 changeset "**/worker/**"
@@ -19,6 +21,12 @@ pipeline {
             }
         }
         stage('test') {
+            agent {
+                docker {
+                    image 'maven:3.6.1-jdk-8-alpine'
+                    args '-v $HOME/.m2:/root/.m2'
+                }
+            }
             when {
                 changeset "**/worker/**"
             }
@@ -30,6 +38,12 @@ pipeline {
             }
         }
         stage('package') {
+            agent {
+                docker {
+                    image 'maven:3.6.1-jdk-8-alpine'
+                    args '-v $HOME/.m2:/root/.m2'
+                }
+            }
             when {
                 branch 'master'
                 changeset "**/worker/**"
@@ -47,13 +61,14 @@ pipeline {
         }
 
         stage('docker-package') {
+            agent any
             when {
                 changeset "**/worker/**"
             }
             steps {
                 echo 'Packaging the worker app with docker.'
                 script {
-                    docker.withRegistry('https://index.docker.io/v1', 'dockerlogin') {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerlogin') {
                         def workerImage = docker.build("rknmit/devops:v${env.BUILD_ID}", "./worker")
                         workerImage.push()
                         workerImage.push("${env.BRANCH_NAME}")
