@@ -2,6 +2,7 @@ pipeline {
     agent {
         docker {
             image 'python:2.7.16-slim'
+            args '--user root'
         }
     }
 
@@ -13,9 +14,7 @@ pipeline {
             steps {
                 echo 'Compiling Vote App'
                 dir('vote') {
-                     withEnv(["HOME=${env.WORKSPACE}"]) {
-                         sh 'pip install --user -r requirements.txt'
-                     }
+                    sh 'pip install -r requirements.txt'
                 }
             }
         }
@@ -27,10 +26,7 @@ pipeline {
             steps {
                 echo 'Running the unit tests for Vote App'
                 dir('vote') {
-                    withEnv(["HOME=${env.WORKSPACE}"]) {
-                        sh 'pip install nose'
-                        sh 'which nosetests'
-                    }
+                    sh 'nosetests -v'
                 }
             }
         }
